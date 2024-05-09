@@ -1,3 +1,10 @@
-FROM node:10.4.0
+FROM ghost:2.37.2 as ghost
 
-RUN apt-get install -y imagemagick
+FROM node:10.4.0 as node
+
+# Copy manifest files
+COPY --from=ghost /var/lib/ghost /var/lib/ghost
+
+
+LABEL org.opencontainers.image.source="https://github.com/a1doll/docker-goof"
+RUN ls
