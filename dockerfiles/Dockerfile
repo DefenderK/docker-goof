@@ -7,6 +7,6 @@ COPY --from=ghost /var/lib/ghost /var/lib/ghost
 COPY ../ .
 
 
-LABEL org.opencontainers.image.source="https://github.com/DefenderK/docker-goof"
-LABEL io.snyk.containers.image.dockerfile="/dockerfiles/Dockerfile"
+LABEL org.opencontainers.image.source=https://github.com/DefenderK/docker-goof
+LABEL io.snyk.containers.image.dockerfile=/dockerfiles/Dockerfile
 RUN ls
