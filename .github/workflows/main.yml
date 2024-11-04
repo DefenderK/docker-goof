@@ -1,0 +1,41 @@
+name: "Snyk Container Image Scan"
+
+on:
+  push:
+    branches:
+      - 'demo*'  # Include any branch starting with demo
+
+jobs:
+  snyk-scan:
+    name: "Snyk Scan Steps"
+    runs-on: ubuntu-latest
+    env:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: docker/setup-buildx-action@v2
+
+      - name: Install Snyk
+        run: |
+          npm install -g snyk
+
+      - name: Authenticate to Snyk
+        run: |
+          snyk auth ${{ secrets.SNYK_TOKEN }}
+
+      - name: Build Docker Image
+        run: |
+          docker buildx build -f Dockerfile . -t defenderk/docker-goof-ci:latest
+          
+      - name: Snyk Image Test
+        run: |
+          snyk container test defenderk/docker-goof-ci:latest --org 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769 --file=Dockerfile --platform=linux/arm64 
+          snyk container monitor defenderk/docker-goof-ci:latest --org 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769 --file=Dockerfile --platform=linux/arm64 
+
+      - name: Fail the workflow if Snyk finds vulnerabilities
+        run: |
+          if [ -n "$(snyk container test your-image-name:latest --org your-org-id --json)" ]; then
+            exit 1
+          fi
