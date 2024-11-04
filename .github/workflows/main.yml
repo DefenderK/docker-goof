@@ -21,7 +21,4 @@ jobs:
         image: defenderk/docker-goof-ci:latest
         args: --file=dockerfiles/Dockerfile
         orgId: 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769
-    - name: Upload result to GitHub Code Scanning
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        sarif_file: snyk.sarif
+
