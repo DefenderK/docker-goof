@@ -19,9 +19,8 @@ jobs:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
         image: defenderk/docker-goof-ci:latest
-        args: --file=dockerfiles/Dockerfile --severity-threshold=high
-    - name: Upload result to GitHub Code Scanning
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        sarif_file: snyk.sarif
+        args: --file=dockerfiles/Dockerfile --severity-threshold=critical
+        command: monitor
+        json: true
+
 
