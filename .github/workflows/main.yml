@@ -20,7 +20,6 @@ jobs:
       with:
         image: defenderk/docker-goof-ci:latest
         args: --file=dockerfiles/Dockerfile --severity-threshold=critical
-        command: monitor
-        json: true
+        command: test # monitor if you want to push to UI
 
 
