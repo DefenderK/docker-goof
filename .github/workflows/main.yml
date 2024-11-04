@@ -19,4 +19,5 @@ jobs:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
         image: defenderk/docker-goof-ci:latest
-        args: --severity-threshold=high
+        args: --file=dockerfiles/Dockerfile --severity-threshold=critical
+        command: monitor # test to scan locally
