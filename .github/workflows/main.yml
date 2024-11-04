@@ -33,7 +33,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker buildx build -f dockerfiles/Dockerfile . -t defenderk/docker-goof-ci:latest
+          docker buildx build --platform linux/amd64 -f dockerfiles/Dockerfile . -t defenderk/docker-goof-ci:latest
           
       - name: Snyk Image Test
         run: |
