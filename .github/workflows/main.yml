@@ -37,7 +37,7 @@ jobs:
 
       - name: Inspect Docker Image
         run: |
-          docker image inspect defenderk/docker-goof-ci:latest | grep -i Platform
+          docker inspect defenderk/docker-goof-ci:latest | grep -i Platform
           
       - name: Snyk Image Test
         run: |
