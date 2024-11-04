@@ -19,5 +19,5 @@ jobs:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
         image: defenderk/docker-goof-ci:latest
-        args: args: --severity-threshold=high
+        args: --severity-threshold=high
 
