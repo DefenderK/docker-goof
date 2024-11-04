@@ -10,7 +10,7 @@ jobs:
     - name: Run Snyk to check Docker image for vulnerabilities
       # Snyk can be used to break the build when it detects vulnerabilities.
       # In this case we want to upload the issues to GitHub Code Scanning
-      continue-on-error: true
+      continue-on-error: false
       uses: snyk/actions/docker@master
       env:
         # In order to use the Snyk Action you will need to have a Snyk API token.
@@ -19,6 +19,5 @@ jobs:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
         image: defenderk/docker-goof-ci:latest
-        args: --file=dockerfiles/Dockerfile
-        orgId: 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769
+        args: args: --severity-threshold=high
 
