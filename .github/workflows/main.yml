@@ -27,7 +27,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker buildx build -f Dockerfile . -t defenderk/docker-goof-ci:latest
+          docker buildx build -f /dockerfiles/Dockerfile . -t defenderk/docker-goof-ci:latest
           
       - name: Snyk Image Test
         run: |
@@ -36,6 +36,6 @@ jobs:
 
       - name: Fail the workflow if Snyk finds vulnerabilities
         run: |
-          if [ -n "$(snyk container test your-image-name:latest --org your-org-id --json)" ]; then
+          if [ -n "$(snyk container test defenderk/docker-goof-ci:latest --org 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769 --json)" ]; then
             exit 1
           fi
