@@ -37,8 +37,8 @@ jobs:
           
       - name: Snyk Image Test
         run: |
-          snyk container test defenderk/docker-goof-ci:latest --org 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769 --file=dockerfiles/Dockerfile --platform=linux/arm64 
-          snyk container monitor defenderk/docker-goof-ci:latest --org 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769 --file=dockerfiles/Dockerfile --platform=linux/arm64 
+          snyk container test defenderk/docker-goof-ci:latest --org 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769 --file=dockerfiles/Dockerfile
+          snyk container monitor defenderk/docker-goof-ci:latest --org 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769 --file=dockerfiles/Dockerfile 
 
       - name: Fail the workflow if Snyk finds vulnerabilities
         run: |
