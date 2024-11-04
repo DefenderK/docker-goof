@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v3
@@ -25,14 +27,18 @@ jobs:
         run: |
           snyk auth ${SNYK_TOKEN}
 
+      - name: Login to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
       - name: Build Docker Image
         run: |
-          docker buildx build -f /dockerfiles/Dockerfile . -t defenderk/docker-goof-ci:latest
+          docker buildx build -f dockerfiles/Dockerfile . -t defenderk/docker-goof-ci:latest
           
       - name: Snyk Image Test
         run: |
-          snyk container test defenderk/docker-goof-ci:latest --org 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769 --file=Dockerfile --platform=linux/arm64 
-          snyk container monitor defenderk/docker-goof-ci:latest --org 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769 --file=Dockerfile --platform=linux/arm64 
+          snyk container test defenderk/docker-goof-ci:latest --org 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769 --file=dockerfiles/Dockerfile --platform=linux/arm64 
+          snyk container monitor defenderk/docker-goof-ci:latest --org 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769 --file=dockerfiles/Dockerfile --platform=linux/arm64 
 
       - name: Fail the workflow if Snyk finds vulnerabilities
         run: |
