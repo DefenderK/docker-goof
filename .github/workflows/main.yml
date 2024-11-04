@@ -19,10 +19,9 @@ jobs:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
         image: defenderk/docker-goof-ci:latest
-        args: --severity-threshold=high --sarif-file-output
-    - name: Upload Snyk results as artifact
-      uses: actions/upload-artifact@v3
+        args: --file=dockerfiles/Dockerfile --severity-threshold=high
+    - name: Upload result to GitHub Code Scanning
+      uses: github/codeql-action/upload-sarif@v2
       with:
-        name: snyk-results
-        path: snyk-report.sarif  # Replace with the actual SARIF output file path
+        sarif_file: snyk.sarif
 
