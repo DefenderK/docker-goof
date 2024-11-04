@@ -1,43 +1,22 @@
-name: "Snyk Container Image Scan"
-
-on:
-  push:
-    branches:
-      - 'demo*'  # Include any branch starting with demo
-
+name: Snyk Container
+on: push
 jobs:
-  snyk-scan:
-    name: "Snyk Scan Steps"
+  snyk:
     runs-on: ubuntu-latest
-    env:
-      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: docker/setup-buildx-action@v2
-
-      - name: Install Snyk
-        run: |
-          npm install -g snyk
-      - name: Authenticate to Snyk
-        run: |
-          snyk auth ${SNYK_TOKEN}
-      - name: Login to Docker Hub
-        run: |
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
-      - name: Build Docker Image
-        run: |
-          docker buildx build --platform linux/amd64 -f dockerfiles/Dockerfile . -t defenderk/docker-goof-ci:latest
-          
-      - name: Snyk Image Test
-        run: |
-          snyk container test defenderk/docker-goof-ci:latest --org 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769 --file=dockerfiles/Dockerfile --platform=linux/amd64
-          snyk container monitor defenderk/docker-goof-ci:latest --org 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769 --file=dockerfiles/Dockerfile --platform=linux/amd64
-      - name: Fail the workflow if Snyk finds vulnerabilities
-        run: |
-          if [ -n "$(snyk container test defenderk/docker-goof-ci:latest --org 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769 --json)" ]; then
-            exit 1
-          fi
+    - uses: actions/checkout@v2
+    - name: Build a Docker image
+      run: docker build -f dockerfiles/Dockerfile -t defenderk/docker-goof-ci:latest .
+    - name: Run Snyk to check Docker image for vulnerabilities
+      # Snyk can be used to break the build when it detects vulnerabilities.
+      # In this case we want to upload the issues to GitHub Code Scanning
+      continue-on-error: false
+      uses: snyk/actions/docker@master
+      env:
+        # In order to use the Snyk Action you will need to have a Snyk API token.
+        # See https://docs.snyk.io/integrations/ci-cd-integrations/github-actions-integration#getting-your-snyk-token
+        # or you can sign up for free at https://snyk.io/login
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        image: defenderk/docker-goof-ci:latest
+        args: --severity-threshold=high
