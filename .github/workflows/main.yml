@@ -1,19 +1,27 @@
-name: "Snyk Container Image Scan"
-
-on:
-  push:
-    branches:
-      - 'demo*'
-
+name: Snyk Container
+on: push
 jobs:
-  snyk-scan:
+  snyk:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: snyk/actions/container-test@v1
-        with:
-          orgId: 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769
-          imageName: defenderk/docker-goof-ci:latest
-          file: dockerfiles/Dockerfile
-          platform: linux/amd64
-          token: ${{ secrets.SNYK_TOKEN }}
+    - uses: actions/checkout@v2
+    - name: Build a Docker image
+      run: docker build -t defenderk/docker-goof-ci:latest .
+    - name: Run Snyk to check Docker image for vulnerabilities
+      # Snyk can be used to break the build when it detects vulnerabilities.
+      # In this case we want to upload the issues to GitHub Code Scanning
+      continue-on-error: true
+      uses: snyk/actions/docker@master
+      env:
+        # In order to use the Snyk Action you will need to have a Snyk API token.
+        # See https://docs.snyk.io/integrations/ci-cd-integrations/github-actions-integration#getting-your-snyk-token
+        # or you can sign up for free at https://snyk.io/login
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        image: defenderk/docker-goof-ci:latest
+        args: --file=dockerfiles/Dockerfile
+        orgId: 08dddbd0-3c6b-48ec-9e0a-cbd736b0e769
+    - name: Upload result to GitHub Code Scanning
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: snyk.sarif
