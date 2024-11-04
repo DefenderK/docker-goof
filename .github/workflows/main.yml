@@ -23,7 +23,7 @@ jobs:
 
       - name: Authenticate to Snyk
         run: |
-          snyk auth ${{ secrets.SNYK_TOKEN }}
+          snyk auth ${SNYK_TOKEN}
 
       - name: Build Docker Image
         run: |
